@@ -4,11 +4,12 @@ namespace HabitLogger
 {
     class Program
     {
+        static SqliteConnection? connection;
         public static void Main(string[] args)
         {
             string connectionString = @"Data Source=habit-tracker.db";
 
-            using (var connection = new SqliteConnection(connectionString))
+            using (connection = new SqliteConnection(connectionString))
             {
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
@@ -43,6 +44,7 @@ namespace HabitLogger
                 switch (option)
                 {
                     case 0:
+                        connection.Close();
                         Environment.Exit(0);
                         break;
                     case 1:
@@ -80,7 +82,36 @@ namespace HabitLogger
 
         static void HandleInsertHabit()
         {
+            while (true)
+            {
+                Console.WriteLine("Please input the habit parameters;");
+                Console.WriteLine("Name of habit:");
 
+                string? name = Console.ReadLine();
+
+                Console.WriteLine("Date of habit (YYYY-MM-DD):");
+
+                string? date = Console.ReadLine();
+
+                int quantityConverted;
+                while (true)
+                {
+                    Console.WriteLine("Quantity of habit:");
+
+                    string? quantityString = Console.ReadLine();
+                    if (Int32.TryParse(quantityString, out quantityConverted))
+                        break;
+                    
+                    Console.WriteLine("Please enter a numeric value for quantity.");
+                }
+
+                connection!.Open();
+                using var command = connection!.CreateCommand();
+                command.CommandText = $"INSERT INTO habits " +
+                    $"(Habit, Date, Quantity) VALUES ('{name}', '{date}', {quantityConverted});";
+                command.ExecuteNonQuery();
+                return;
+            }
         }
 
         static void HandleUpdateHabit()
