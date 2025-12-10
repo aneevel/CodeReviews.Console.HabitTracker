@@ -5,6 +5,7 @@ namespace HabitLogger
     class Program
     {
         static SqliteConnection? connection;
+
         public static void Main(string[] args)
         {
             string connectionString = @"Data Source=habit-tracker.db";
@@ -14,7 +15,7 @@ namespace HabitLogger
                 connection.Open();
                 var tableCmd = connection.CreateCommand();
 
-                tableCmd.CommandText = 
+                tableCmd.CommandText =
                     @"CREATE TABLE IF NOT EXISTS habits (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         Habit TEXT,
@@ -31,13 +32,17 @@ namespace HabitLogger
             {
                 Console.WriteLine("MAIN MENU\n");
                 Console.WriteLine("Please choose an option:\n");
-                Console.WriteLine("0 - Close Application\n1 - View all Habits\n2 - Insert a new Habit\n3 - Update an existing Habit\n4 - Delete an existing Habit");
+                Console.WriteLine(
+                    "0 - Close Application\n1 - View all Habits\n2 - Insert a new Habit\n3 - Update an existing Habit\n4 - Delete an existing Habit"
+                );
                 Console.WriteLine("--------------------------------\n");
 
                 string? input = Console.ReadLine();
                 if (!Int32.TryParse(input, out int option) || !(0 <= option && option <= 5))
                 {
-                    Console.WriteLine("Invalid option chosen. Please choose one of the provided options.");
+                    Console.WriteLine(
+                        "Invalid option chosen. Please choose one of the provided options."
+                    );
                     continue;
                 }
 
@@ -93,35 +98,35 @@ namespace HabitLogger
 
                 string? date = Console.ReadLine();
 
-                int quantityConverted;
-                while (true)
-                {
-                    Console.WriteLine("Quantity of habit:");
-
-                    string? quantityString = Console.ReadLine();
-                    if (Int32.TryParse(quantityString, out quantityConverted))
-                        break;
-                    
-                    Console.WriteLine("Please enter a numeric value for quantity.");
-                }
+                int quantity = GetHabitQuantity();
 
                 connection!.Open();
                 using var command = connection!.CreateCommand();
-                command.CommandText = $"INSERT INTO habits " +
-                    $"(Habit, Date, Quantity) VALUES ('{name}', '{date}', {quantityConverted});";
+                command.CommandText =
+                    $"INSERT INTO habits "
+                    + $"(Habit, Date, Quantity) VALUES ('{name}', '{date}', {quantity});";
                 command.ExecuteNonQuery();
                 return;
             }
         }
 
-        static void HandleUpdateHabit()
+        static int GetHabitQuantity()
         {
+            int quantityConverted;
+            while (true)
+            {
+                Console.WriteLine("Quantity of habit:");
 
+                string? quantityString = Console.ReadLine();
+                if (Int32.TryParse(quantityString, out quantityConverted))
+                    return quantityConverted;
+
+                Console.WriteLine("Please enter a numeric value for quantity.");
+            }
         }
 
-        static void HandleDeleteHabit()
-        {
+        static void HandleUpdateHabit() { }
 
-        }
+        static void HandleDeleteHabit() { }
     }
 }
