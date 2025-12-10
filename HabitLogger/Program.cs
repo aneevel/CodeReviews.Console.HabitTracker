@@ -75,6 +75,21 @@ namespace HabitLogger
                 Console.WriteLine("Displaying all habits");
                 Console.WriteLine("---------------------");
 
+                connection!.Open();
+                using var command = connection!.CreateCommand();
+                command.CommandText = "SELECT * FROM habits";
+
+                using var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var name = reader.GetString(0);
+                    var date = reader.GetString(1);
+                    var quantity = reader.GetString(2);
+
+                    Console.WriteLine($"{name} | {date} | {quantity}");
+                }
+
                 Console.WriteLine("Press any key to return to main menu...");
                 string? input = Console.ReadLine();
 
