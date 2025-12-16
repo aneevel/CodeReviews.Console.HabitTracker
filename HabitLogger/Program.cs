@@ -122,7 +122,70 @@ namespace HabitLogger
                     $"INSERT INTO habits "
                     + $"(Habit, Date, Quantity) VALUES ('{name}', '{date}', {quantity});";
                 command.ExecuteNonQuery();
+
+                Console.WriteLine("Habit added!");
                 return;
+            }
+        }
+
+        static void HandleUpdateHabit() 
+        { 
+            while (true)
+            {
+                Console.WriteLine("Enter the id number of the habit you wish to update:");
+
+                string? input = Console.ReadLine();
+
+                if (Int32.TryParse(input, out int updateId))
+                {
+                    if (HabitExists(updateId))
+                    {
+                        string name = GetHabitNameFromUser();
+
+                        DateOnly date = GetHabitDateFromUser();
+
+                        int quantity = GetHabitQuantityFromUser();
+
+                        using var command = connection!.CreateCommand();
+                        command.CommandText =
+                        $"UPDATE habits SET Habit = \"{name}\", Date = \'{date}\', Quantity = {quantity} WHERE id = {updateId}";
+                        command.ExecuteNonQuery();
+
+                        Console.WriteLine($"Habit with id {updateId} updated!");
+
+                        return;
+                    }
+                    Console.WriteLine($"Habit with id {updateId} does not exist; please check your entries.");
+                    continue;
+                }
+                Console.WriteLine("Please enter a valid number id.");
+            }
+        }
+
+        static void HandleDeleteHabit() 
+        { 
+            while (true)
+            {
+                Console.WriteLine("Enter the id number of the habit you wish to delete:");
+
+                string? input = Console.ReadLine(); 
+
+                if (Int32.TryParse (input, out int deleteId))
+                {
+                    if ( HabitExists(deleteId))
+                    {
+                        using var command = connection!.CreateCommand();
+                        command.CommandText =
+                            $"DELETE FROM habits WHERE id = {deleteId}";
+                        command.ExecuteNonQuery();
+
+                        Console.WriteLine($"Habit {deleteId} deleted!");
+                        return;
+                    }
+                    Console.WriteLine($"Habit with id {deleteId} does not exist; please check your entries.");
+                    continue;
+                }
+                Console.WriteLine("Please enter a valid number id.");
             }
         }
 
@@ -190,39 +253,5 @@ namespace HabitLogger
                 $"SELECT id FROM habits WHERE id = {id};";
                 return command.ExecuteReader().HasRows;
         }
-
-        static void HandleUpdateHabit() 
-        { 
-            while (true)
-            {
-                Console.WriteLine("Enter the id number of the habit you wish to update:");
-
-                string? input = Console.ReadLine();
-
-                if (Int32.TryParse(input, out int updateId))
-                {
-                    if (HabitExists(updateId))
-                    {
-                        string name = GetHabitNameFromUser();
-
-                        DateOnly date = GetHabitDateFromUser();
-
-                        int quantity = GetHabitQuantityFromUser();
-
-                        using var command = connection!.CreateCommand();
-                        command.CommandText =
-                        $"UPDATE habits SET Habit = \"{name}\", Date = \'{date}\', Quantity = {quantity} WHERE id = {updateId}";
-                        command.ExecuteNonQuery();
-
-                        return;
-                    }
-                    Console.WriteLine($"Habit with id {updateId} does not exist; please check your entries.");
-                    continue;
-                }
-                Console.WriteLine("Please enter a valid number id.");
-            }
-        }
-
-        static void HandleDeleteHabit() { }
     }
 }
