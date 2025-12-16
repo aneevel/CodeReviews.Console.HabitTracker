@@ -39,6 +39,8 @@ namespace HabitLogger
                 Console.WriteLine("--------------------------------\n");
 
                 string? input = Console.ReadLine();
+
+                // TODO: Replace magic variables
                 if (!Int32.TryParse(input, out int option) || !(0 <= option && option <= 5))
                 {
                     Console.WriteLine(
@@ -84,11 +86,12 @@ namespace HabitLogger
 
                 while (reader.Read())
                 {
-                    var name = reader.GetString(0);
-                    var date = reader.GetString(1);
-                    var quantity = reader.GetString(2);
+                    var id = reader.GetString(0);
+                    var name = reader.GetString(1);
+                    var date = reader.GetString(2);
+                    var quantity = reader.GetString(3);
 
-                    Console.WriteLine($"{name} | {date} | {quantity}");
+                    Console.WriteLine($"{id} | {name} | {date} | {quantity}");
                 }
 
                 Console.WriteLine("Enter any key to return to main menu...\n");
@@ -106,9 +109,8 @@ namespace HabitLogger
             while (true)
             {
                 Console.WriteLine("Please input the habit parameters;");
-                Console.WriteLine("Name of habit:");
 
-                string? name = Console.ReadLine();
+                string name = GetHabitNameFromUser();
 
                 DateOnly date = GetHabitDateFromUser();
 
@@ -163,7 +165,63 @@ namespace HabitLogger
             }
         }
 
-        static void HandleUpdateHabit() { }
+        static string GetHabitNameFromUser()
+        {
+            string? input;
+            while (true)
+            {
+                Console.WriteLine("Enter name of the habit:");
+
+                input = Console.ReadLine();
+                if (input != null)
+                {
+                    return input;
+                }
+                Console.WriteLine("Please enter a valid text name.");
+            }
+        }
+
+        static bool HabitExists(int id)
+        {
+                connection!.Open();
+
+                using var command = connection!.CreateCommand();
+                command.CommandText =
+                $"SELECT id FROM habits WHERE id = {id};";
+                return command.ExecuteReader().HasRows;
+        }
+
+        static void HandleUpdateHabit() 
+        { 
+            while (true)
+            {
+                Console.WriteLine("Enter the id number of the habit you wish to update:");
+
+                string? input = Console.ReadLine();
+
+                if (Int32.TryParse(input, out int updateId))
+                {
+                    if (HabitExists(updateId))
+                    {
+                        string name = GetHabitNameFromUser();
+
+                        DateOnly date = GetHabitDateFromUser();
+
+                        int quantity = GetHabitQuantityFromUser();
+
+                        using var command = connection!.CreateCommand();
+                        command.CommandText =
+                        $"UPDATE habits SET Habit = \"{name}\", Date = \'{date}\', Quantity = {quantity} WHERE id = {updateId}";
+                        command.ExecuteNonQuery();
+
+                        return;
+                    }
+                    Console.WriteLine($"Habit with id {updateId} does not exist; please check your entries.");
+                    continue;
+                }
+                Console.WriteLine("Please enter a valid number id.");
+            }
+        }
 
         static void HandleDeleteHabit() { }
     }
