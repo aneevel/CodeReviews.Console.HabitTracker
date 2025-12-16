@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using System.Text.RegularExpressions;
 
 namespace HabitLogger
 {
@@ -90,7 +91,7 @@ namespace HabitLogger
                     Console.WriteLine($"{name} | {date} | {quantity}");
                 }
 
-                Console.WriteLine("Press any key to return to main menu...");
+                Console.WriteLine("Enter any key to return to main menu...\n");
                 string? input = Console.ReadLine();
 
                 if (input != null)
@@ -109,11 +110,9 @@ namespace HabitLogger
 
                 string? name = Console.ReadLine();
 
-                Console.WriteLine("Date of habit (YYYY-MM-DD):");
+                DateOnly date = GetHabitDateFromUser();
 
-                string? date = Console.ReadLine();
-
-                int quantity = GetHabitQuantity();
+                int quantity = GetHabitQuantityFromUser();
 
                 connection!.Open();
                 using var command = connection!.CreateCommand();
@@ -125,18 +124,42 @@ namespace HabitLogger
             }
         }
 
-        static int GetHabitQuantity()
+        static int GetHabitQuantityFromUser()
         {
             int quantityConverted;
             while (true)
             {
                 Console.WriteLine("Quantity of habit:");
 
-                string? quantityString = Console.ReadLine();
-                if (Int32.TryParse(quantityString, out quantityConverted))
+                string? input = Console.ReadLine();
+                if (Int32.TryParse(input, out quantityConverted))
                     return quantityConverted;
 
                 Console.WriteLine("Please enter a numeric value for quantity.");
+            }
+        }
+
+        static DateOnly GetHabitDateFromUser()
+        {
+            DateOnly date;
+            while (true)
+            {
+                Console.WriteLine("Date of habit (YYYY-MM-DD) or (t) for current date:");
+
+                string? input = Console.ReadLine();
+                if (input != null && Regex.IsMatch(input, "\\d{4}[-]\\d{2}[-]\\d{2}"))
+                {
+                    DateOnly.TryParse(input, out date);
+                    return date;
+                }
+                else if (input != null && Regex.IsMatch(input, "[t]"))
+                {
+                    return DateOnly.FromDateTime(DateTime.Now);
+                }
+                else
+                {
+                    Console.WriteLine("Please enter a date in the correct format, or (t) for current date:");
+                }
             }
         }
 
