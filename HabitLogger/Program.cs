@@ -91,7 +91,7 @@ namespace HabitLogger
                     var date = reader.GetString(2);
                     var quantity = reader.GetString(3);
 
-                    Console.WriteLine($"{id} | {name} | {date} | {quantity}");
+                    Console.WriteLine($"#{id} | {name} | {date} | {quantity}");
                 }
 
                 Console.WriteLine("Enter any key to return to main menu...\n");
