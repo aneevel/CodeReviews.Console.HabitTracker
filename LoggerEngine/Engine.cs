@@ -79,7 +79,7 @@ namespace LoggerEngine
                 Console.WriteLine("Displaying all habits");
                 Console.WriteLine("---------------------");
 
-                databaseManager.ReadRecords("habits");
+                databaseManager.ReadRecords();
 
                 Console.WriteLine("Enter any key to return to main menu...\n");
                 _ = userInputHelper.GetStringInput("", true);
@@ -98,7 +98,7 @@ namespace LoggerEngine
                 DateOnly date = GetHabitDateFromUser();
                 int quantity = GetHabitQuantityFromUser();
 
-                databaseManager.InsertRecord("habits", name, date, quantity);
+                databaseManager.InsertRecord(name, date, quantity);
 
                 Console.WriteLine("Habit added!");
                 return;
@@ -113,13 +113,13 @@ namespace LoggerEngine
 
                 Int32 updateId = userInputHelper.GetInt32Input("Please enter a numeric value for quantity.");
 
-                if (databaseManager.RecordExists("habits", updateId))
+                if (databaseManager.RecordExists(updateId))
                 {
                     string name = GetHabitNameFromUser();
                     DateOnly date = GetHabitDateFromUser();
                     int quantity = GetHabitQuantityFromUser();
 
-                    databaseManager.UpdateRecord("habits", updateId, name, date, quantity);
+                    databaseManager.UpdateRecord(updateId, name, date, quantity);
 
                     Console.WriteLine($"Habit with id {updateId} updated!");
 
@@ -141,9 +141,9 @@ namespace LoggerEngine
 
                 Int32 deleteId = userInputHelper.GetInt32Input("Please enter a numeric value for quantity.");
 
-                if ( databaseManager.RecordExists("habits", deleteId))
+                if ( databaseManager.RecordExists(deleteId))
                 {
-                    databaseManager.DeleteRecord("habits", deleteId);
+                    databaseManager.DeleteRecord(deleteId);
 
                     Console.WriteLine($"Habit {deleteId} deleted!");
                     return;

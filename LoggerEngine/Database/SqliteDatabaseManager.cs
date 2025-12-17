@@ -24,15 +24,13 @@ namespace LoggerEngine.Database
             connection!.Close();
         }
 
-        public void ReadRecords(string tableName)
+        public void ReadRecords()
         {
             using (connection)
             {
-                connection!.Open();
-                using (SqliteCommand command = new SqliteCommand("SELECT * FROM @tableName;"))
+                using (SqliteCommand command = new SqliteCommand("SELECT * FROM habits;"))
                 {
-                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
-
+                    connection!.Open();
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -53,16 +51,15 @@ namespace LoggerEngine.Database
 
         }
 
-        public void InsertRecord(string tableName, string name, DateOnly date, int quantity)
+        public void InsertRecord(string name, DateOnly date, int quantity)
         {
             using (connection)
             {
                 connection!.Open();
                 // TODO: Make generic
-                using (SqliteCommand command = new SqliteCommand("INSERT INTO @tableName (Habit, Date, Quantity)" +
+                using (SqliteCommand command = new SqliteCommand("INSERT INTO habits (Habit, Date, Quantity)" +
                     "VALUES (@name, @date, @quantity);", connection))
                 {
-                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
                     command.Parameters.Add("@name", SqliteType.Text).Value = name;
                     command.Parameters.Add("@date", SqliteType.Text).Value = date;
                     command.Parameters.Add("@quantity", SqliteType.Integer).Value = quantity;
@@ -73,52 +70,49 @@ namespace LoggerEngine.Database
             }
         }
 
-        public void UpdateRecord(string tableName, int id, string name, DateOnly date, int quantity)
+        public void UpdateRecord(int id, string name, DateOnly date, int quantity)
         {
             using (connection)
             {
                 connection!.Open();
 
-                using (SqliteCommand command = new SqliteCommand("UPDATE @tableName SET Habit = @name, " +
+                using (SqliteCommand command = new SqliteCommand("UPDATE habits SET Habit = @name, " +
                     "Date = @date, Quantity = @quantity where id = @id", connection))
                 {
-                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
                     command.Parameters.Add("@name", SqliteType.Text).Value = name;
                     command.Parameters.Add("@date", SqliteType.Text).Value = date;
                     command.Parameters.Add("@quantity", SqliteType.Integer).Value = quantity;
                     command.Parameters.Add("@id", SqliteType.Integer).Value = id;
 
-                    command.ExecuteNonQuery();
+                    command.ExecuteScalar();
                 }
                 connection!.Close();
             }
         }
 
-        public void DeleteRecord(string tableName, int id)
+        public void DeleteRecord(int id)
         {
             using (connection)
             {
                 connection!.Open();
 
-                using (SqliteCommand command = new SqliteCommand("DELETE FROM @tableName WHERE id = @id", connection))
+                using (SqliteCommand command = new SqliteCommand("DELETE FROM habits WHERE id = @id", connection))
                 {
-                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
                     command.Parameters.Add("@id", SqliteType.Integer).Value = id;
-                    command.ExecuteNonQuery();
+                    command.ExecuteScalar();
                 }
                 connection!.Close();
             }
         }
 
-        public bool RecordExists(string tableName, int id)
+        public bool RecordExists(int id)
         {
             using (connection)
             {
                 connection!.Open();
 
-                using (SqliteCommand command = new SqliteCommand("SELECT id from @tableName WHERE id = @id", connection))
+                using (SqliteCommand command = new SqliteCommand("SELECT id from habits WHERE id = @id", connection))
                 {
-                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
                     command.Parameters.Add("@id", SqliteType.Integer).Value = id;
                     bool hasRows = command.ExecuteReader().HasRows;
 
@@ -130,14 +124,14 @@ namespace LoggerEngine.Database
 
         void Initialize()
         {
-            if (!TableExists("habits"))
+            if (!TableExists())
             {
-                CreateHabitsTable();
+                CreateTable();
                 SeedDatabase();
             }
         }
         
-        void CreateHabitsTable()
+        void CreateTable()
         {
             using (connection)
             {
@@ -145,7 +139,7 @@ namespace LoggerEngine.Database
                 using var command = connection.CreateCommand();
 
                 command.CommandText =
-                    @"CREATE TABLE habits (
+                    @"CREATE TABLE IF NOT EXISTS habits (
                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         Habit TEXT,
                         Date TEXT,
@@ -176,21 +170,20 @@ namespace LoggerEngine.Database
 
                 int amount = random.Next(RANDOM_HABIT_AMOUNT_MAX);
 
-                InsertRecord("habits", habit, date, amount);
+                InsertRecord(habit, date, amount);
             }
         }
 
 
-        public bool TableExists(string tableName)
+        public bool TableExists()
         {
             using (connection)
             {
                 connection!.Open();
 
-                using (SqliteCommand command = new SqliteCommand($"SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = '@tableName'",
+                using (SqliteCommand command = new SqliteCommand($"SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'habits'",
                      connection))
                 {
-                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
 
                     var result = command.ExecuteScalar();
                     connection.Close();

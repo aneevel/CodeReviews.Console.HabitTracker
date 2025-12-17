@@ -16,50 +16,44 @@ namespace LoggerEngine.Database
         public abstract void Close();
 
         /// <summary>
-        /// Read the records from given table
+        /// Read the records from main table
         /// </summary>
-        /// <param name="tableName">Name of the table to read from</param>
-        public abstract void ReadRecords(string tableName);
+        public abstract void ReadRecords();
 
         /// <summary>
         /// Insert a record with the passed parameters
         /// </summary>
-        /// <param name="tableName">Name of the table to insert record into</param>
         /// <param name="name">Name of the record</param>
         /// <param name="date">Date of the record</param>
         /// <param name="quantity">Quantity of the record</param>
 
-        public abstract void InsertRecord(string tableName, string name, DateOnly date, int quantity);
+        public abstract void InsertRecord(string name, DateOnly date, int quantity);
 
         /// <summary>
         /// Update a record with the given ID
         /// </summary>
-        /// <param name="tableName">Name of the table</param>
         /// <param name="id">ID of the record</param>
         /// <param name="name">Name of the record</param>
         /// <param name="date">Date of the record</param>
         /// <param name="quantity">Quantity of the record</param>
-        public abstract void UpdateRecord(string tableName, int id, string name, DateOnly date, int quantity);
+        public abstract void UpdateRecord(int id, string name, DateOnly date, int quantity);
 
         /// <summary>
         /// Delete a record with the given ID
         /// </summary>
-        /// <param name="tableName">Name of the table</param>
         /// <param name="id">ID of the record</param>
-        public abstract void DeleteRecord(string tableName, int id);
+        public abstract void DeleteRecord(int id);
 
         /// <summary>
         /// Check if a record exists with given ID
         /// </summary>
-        /// <param name="tableName">Name of the table</param>
         /// <param name="id">Id of the record</param>
-        public abstract bool RecordExists(string tableName, int id);
+        public abstract bool RecordExists(int id);
 
         /// <summary>
-        /// Check if a table exists with given name
+        /// Check if the main table in database exists
         /// </summary>
-        /// <param name="tableName">Name of the table</param>
-        /// <returns></returns>
-        public abstract bool TableExists(string tableName);
+        /// <returns> true if it exists, false otherwise </returns>
+        public abstract bool TableExists();
     }
 }
