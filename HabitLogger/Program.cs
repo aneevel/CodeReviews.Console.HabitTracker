@@ -1,6 +1,5 @@
 ﻿using LoggerEngine;
 using Microsoft.Data.Sqlite;
-using System.Text.RegularExpressions;
 
 namespace HabitLogger
 {
