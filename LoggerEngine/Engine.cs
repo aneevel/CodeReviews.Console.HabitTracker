@@ -39,7 +39,7 @@ namespace LoggerEngine
                 }
                 Console.WriteLine("--------------------------------\n");
 
-                Int32 option = userInputHelper.GetInt32Input();
+                Int32 option = userInputHelper.GetInt32Input("Please enter a numeric value corresponding to a menu option.");
 
                 if (!(0 <= option && option <= Engine.menuOptions.Count()))
                 {
@@ -110,7 +110,7 @@ namespace LoggerEngine
             {
                 Console.WriteLine("Enter the id number of the habit you wish to update:");
 
-                Int32 updateId = userInputHelper.GetInt32Input();
+                Int32 updateId = userInputHelper.GetInt32Input("Please enter a numeric value for quantity.");
 
                 if (databaseManager.HabitExists(updateId))
                 {
@@ -138,7 +138,7 @@ namespace LoggerEngine
             {
                 Console.WriteLine("Enter the id number of the habit you wish to delete:");
 
-                Int32 deleteId = userInputHelper.GetInt32Input();
+                Int32 deleteId = userInputHelper.GetInt32Input("Please enter a numeric value for quantity.");
 
                 if ( databaseManager.HabitExists(deleteId))
                 {
@@ -161,7 +161,7 @@ namespace LoggerEngine
             {
                 Console.WriteLine("Quantity of habit:");
 
-                return userInputHelper.GetInt32Input();
+                return userInputHelper.GetInt32Input("Please enter a numeric value for quantity.");
             }
         }
 
@@ -171,7 +171,9 @@ namespace LoggerEngine
             {
                 Console.WriteLine("Date of habit (YYYY-MM-DD) or (t) for current date:");
 
-                return userInputHelper.GetDateOnlyInputMatchingRegex(new Regex("^\\d{4}[-]\\d{2}[-]\\d{2}$"), new Regex("^t$"));
+                return userInputHelper.GetDateOnlyInputMatchingRegex("Please enter a date in the correct format, or (t) for current date:",
+                    new Regex("^\\d{4}[-]\\d{2}[-]\\d{2}$"), 
+                    new Regex("^t$"));
             }
         }
 
@@ -181,7 +183,7 @@ namespace LoggerEngine
             {
                 Console.WriteLine("Enter name of the habit:");
 
-                return userInputHelper.GetStringInput();
+                return userInputHelper.GetStringInput("Please enter a valid text name.");
             }
         }
     }
