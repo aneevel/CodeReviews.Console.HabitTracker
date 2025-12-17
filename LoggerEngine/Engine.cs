@@ -5,30 +5,11 @@ namespace LoggerEngine
 {
     public class Engine
     {
-        SqliteConnection? connection;
+        DatabaseManager databaseManager;
 
         public Engine(string connectionString)
         {
-            connection = new SqliteConnection(connectionString);
-            Initialize();
-        }
-
-        public void Initialize()
-        {
-            using (connection)
-            {
-                connection!.Open();
-                var tableCmd = connection.CreateCommand();
-
-                tableCmd.CommandText =
-                    @"CREATE TABLE IF NOT EXISTS habits (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        Habit TEXT,
-                        Date TEXT,
-                        Quantity INTEGER)";
-                tableCmd.ExecuteNonQuery();
-                connection.Close();
-            }
+            databaseManager = new(connectionString);
         }
 
         public void Run()
@@ -59,7 +40,7 @@ namespace LoggerEngine
                 switch (option)
                 {
                     case 0:
-                        connection!.Close();
+                        databaseManager.Close();
                         Environment.Exit(0);
                         break;
                     case 1:
@@ -85,23 +66,7 @@ namespace LoggerEngine
                 Console.WriteLine("Displaying all habits");
                 Console.WriteLine("---------------------");
 
-                connection!.Open();
-                using var command = connection!.CreateCommand();
-                command.CommandText = "SELECT * FROM habits";
-
-                using var reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    var id = reader.GetString(0);
-                    var name = reader.GetString(1);
-                    var date = reader.GetString(2);
-                    var quantity = reader.GetString(3);
-
-                    Console.WriteLine($"#{id} | {name} | {date} | {quantity}");
-                }
-
-                connection.Close();
+                databaseManager.ViewHabits();
 
                 Console.WriteLine("Enter any key to return to main menu...\n");
                 string? input = Console.ReadLine();
@@ -120,18 +85,10 @@ namespace LoggerEngine
                 Console.WriteLine("Please input the habit parameters;");
 
                 string name = GetHabitNameFromUser();
-
                 DateOnly date = GetHabitDateFromUser();
-
                 int quantity = GetHabitQuantityFromUser();
 
-                connection!.Open();
-                using var command = connection!.CreateCommand();
-                command.CommandText =
-                    $"INSERT INTO habits "
-                    + $"(Habit, Date, Quantity) VALUES ('{name}', '{date}', {quantity});";
-                command.ExecuteNonQuery();
-                connection.Close();
+                databaseManager.InsertHabit(name, date, quantity);
 
                 Console.WriteLine("Habit added!");
                 return;
@@ -148,19 +105,13 @@ namespace LoggerEngine
 
                 if (Int32.TryParse(input, out int updateId))
                 {
-                    if (HabitExists(updateId))
+                    if (databaseManager.HabitExists(updateId))
                     {
                         string name = GetHabitNameFromUser();
-
                         DateOnly date = GetHabitDateFromUser();
-
                         int quantity = GetHabitQuantityFromUser();
 
-                        using var command = connection!.CreateCommand();
-                        command.CommandText =
-                        $"UPDATE habits SET Habit = \"{name}\", Date = \'{date}\', Quantity = {quantity} WHERE id = {updateId}";
-                        command.ExecuteNonQuery();
-                        connection.Close();
+                        databaseManager.UpdateHabit(updateId, name, date, quantity);
 
                         Console.WriteLine($"Habit with id {updateId} updated!");
 
@@ -183,13 +134,9 @@ namespace LoggerEngine
 
                 if (Int32.TryParse (input, out int deleteId))
                 {
-                    if ( HabitExists(deleteId))
+                    if ( databaseManager.HabitExists(deleteId))
                     {
-                        using var command = connection!.CreateCommand();
-                        command.CommandText =
-                            $"DELETE FROM habits WHERE id = {deleteId}";
-                        command.ExecuteNonQuery();
-                        connection.Close();
+                        databaseManager.DeleteHabit(deleteId);
 
                         Console.WriteLine($"Habit {deleteId} deleted!");
                         return;
@@ -254,16 +201,6 @@ namespace LoggerEngine
                 }
                 Console.WriteLine("Please enter a valid text name.");
             }
-        }
-
-        bool HabitExists(int id)
-        {
-                connection!.Open();
-
-                using var command = connection!.CreateCommand();
-                command.CommandText =
-                $"SELECT id FROM habits WHERE id = {id};";
-                return command.ExecuteReader().HasRows;
         }
     }
 }
