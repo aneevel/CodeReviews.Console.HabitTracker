@@ -81,7 +81,7 @@ namespace LoggerEngine
                 databaseManager.ViewHabits();
 
                 Console.WriteLine("Enter any key to return to main menu...\n");
-                _ = userInputHelper.GetStringInput();
+                _ = userInputHelper.GetStringInput("", true);
 
                 break;
             }

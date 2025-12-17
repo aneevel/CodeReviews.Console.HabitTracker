@@ -8,14 +8,16 @@ namespace LoggerEngine.Helpers
         /// Retrieves a string input from the user via Console
         /// </summary>
         /// <param name="invalidInputMessage">An optional message for when user provides an invalid input</param>
+        /// <param name="acceptEmpty">An optional param for accepting empty input</param>
         /// <returns>A string representing the user's input</returns>
-        public string GetStringInput(string invalidInputMessage = "")
+        public string GetStringInput(string invalidInputMessage = "", bool acceptEmpty = false)
         {
             while (true)
             {
                 string? input = Console.ReadLine();
 
-                if (input == null)
+                // Second clause only applies if acceptEmpty is false
+                if (input == null || (!acceptEmpty && input.Length == 0) )
                 {
                     Console.WriteLine($"{invalidInputMessage}");
                     continue;
@@ -62,6 +64,10 @@ namespace LoggerEngine.Helpers
                             {
                                 if (DateOnly.TryParse(input, out DateOnly dateOnly))
                                     return dateOnly;
+
+                                // Handle special (t) case
+                                if (regex.ToString() == "^t$")
+                                    return DateOnly.FromDateTime(DateTime.Now);
                             }
                         }
                     }

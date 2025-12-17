@@ -11,8 +11,9 @@ namespace LoggerEngine.Helpers
         /// Get user input in the form of a string
         /// </summary>
         /// <param name="invalidInputMessage">An optional message for when user provides an invalid input</param>
+        /// <param name="acceptEmpty">An optional param for accepting empty input</param>
         /// <returns>A string representing the user's input</returns>
-        public string GetStringInput(string invalidInputMessage = "");
+        public string GetStringInput(string invalidInputMessage = "", bool acceptEmpty = false);
 
         /// <summary>
         /// Get user input in the form of an Int32
