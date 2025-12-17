@@ -1,8 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
 
-namespace LoggerEngine
+namespace LoggerEngine.Database
 {
-    internal class DatabaseManager
+    internal class SqliteDatabaseManager : IDatabaseManager
     {
         const int SEEDING_ROUNDS = 100;
         const int RANDOM_HABIT_AMOUNT_MAX = 100;
@@ -13,7 +13,7 @@ namespace LoggerEngine
         string[] habitChoices = [ "Walking", "Running", "Lift weights",
             "Clean room", "Make bed", "Do dishes", "Avoid sugary drinks"];
 
-        public DatabaseManager(string connectionString)
+        public SqliteDatabaseManager(string connectionString)
         {
            connection = new SqliteConnection(connectionString);
            Initialize();
@@ -24,38 +24,45 @@ namespace LoggerEngine
             connection!.Close();
         }
 
-        public void ViewHabits()
+        public void ReadRecords(string tableName)
         {
             using (connection)
             {
                 connection!.Open();
-                using var command = connection!.CreateCommand();
-                command.CommandText = "SELECT * FROM habits;";
-
-                using var reader = command.ExecuteReader();
-
-                while (reader.Read())
+                using (SqliteCommand command = new SqliteCommand("SELECT * FROM @tableName;"))
                 {
-                    var id = reader.GetString(0);
-                    var name = reader.GetString(1);
-                    var date = reader.GetString(2);
-                    var quantity = reader.GetString(3);
+                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
 
-                    Console.WriteLine($"#{id} | {name} | {date} | {quantity}");
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // Should be generic
+                            var id = reader.GetString(0);
+                            var name = reader.GetString(1);
+                            var date = reader.GetString(2);
+                            var quantity = reader.GetString(3);
+
+                            // TODO: Should be generic
+                            Console.WriteLine($"#{id} | {name} | {date} | {quantity}");
+                        }
+                    }
                 }
                 connection!.Close();
             }
 
         }
 
-        public void InsertHabit(string name, DateOnly date, int quantity)
+        public void InsertRecord(string tableName, string name, DateOnly date, int quantity)
         {
             using (connection)
             {
                 connection!.Open();
-                using (SqliteCommand command = new SqliteCommand("INSERT INTO habits (Habit, Date, Quantity)" +
+                // TODO: Make generic
+                using (SqliteCommand command = new SqliteCommand("INSERT INTO @tableName (Habit, Date, Quantity)" +
                     "VALUES (@name, @date, @quantity);", connection))
                 {
+                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
                     command.Parameters.Add("@name", SqliteType.Text).Value = name;
                     command.Parameters.Add("@date", SqliteType.Text).Value = date;
                     command.Parameters.Add("@quantity", SqliteType.Integer).Value = quantity;
@@ -66,15 +73,16 @@ namespace LoggerEngine
             }
         }
 
-        public void UpdateHabit(int id, string name, DateOnly date, int quantity)
+        public void UpdateRecord(string tableName, int id, string name, DateOnly date, int quantity)
         {
             using (connection)
             {
                 connection!.Open();
 
-                using (SqliteCommand command = new SqliteCommand("UPDATE habits SET Habit = @name, " +
+                using (SqliteCommand command = new SqliteCommand("UPDATE @tableName SET Habit = @name, " +
                     "Date = @date, Quantity = @quantity where id = @id", connection))
                 {
+                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
                     command.Parameters.Add("@name", SqliteType.Text).Value = name;
                     command.Parameters.Add("@date", SqliteType.Text).Value = date;
                     command.Parameters.Add("@quantity", SqliteType.Integer).Value = quantity;
@@ -86,14 +94,15 @@ namespace LoggerEngine
             }
         }
 
-        public void DeleteHabit(int id)
+        public void DeleteRecord(string tableName, int id)
         {
             using (connection)
             {
                 connection!.Open();
 
-                using (SqliteCommand command = new SqliteCommand("DELETE FROM habits WHERE id = @id", connection))
+                using (SqliteCommand command = new SqliteCommand("DELETE FROM @tableName WHERE id = @id", connection))
                 {
+                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
                     command.Parameters.Add("@id", SqliteType.Integer).Value = id;
                     command.ExecuteNonQuery();
                 }
@@ -101,14 +110,15 @@ namespace LoggerEngine
             }
         }
 
-        public bool HabitExists(int id)
+        public bool RecordExists(string tableName, int id)
         {
             using (connection)
             {
                 connection!.Open();
 
-                using (SqliteCommand command = new SqliteCommand("SELECT id from habits WHERE id = @id", connection))
+                using (SqliteCommand command = new SqliteCommand("SELECT id from @tableName WHERE id = @id", connection))
                 {
+                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
                     command.Parameters.Add("@id", SqliteType.Integer).Value = id;
                     bool hasRows = command.ExecuteReader().HasRows;
 
@@ -120,7 +130,7 @@ namespace LoggerEngine
 
         void Initialize()
         {
-            if (!HabitsTableExists())
+            if (!TableExists("habits"))
             {
                 CreateHabitsTable();
                 SeedDatabase();
@@ -166,23 +176,26 @@ namespace LoggerEngine
 
                 int amount = random.Next(RANDOM_HABIT_AMOUNT_MAX);
 
-                InsertHabit(habit, date, amount);
+                InsertRecord("habits", habit, date, amount);
             }
         }
 
-        bool HabitsTableExists()
+
+        public bool TableExists(string tableName)
         {
             using (connection)
             {
                 connection!.Open();
 
-                using var command = connection.CreateCommand();
-                command.CommandText =
-                $"SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'habits'";
+                using (SqliteCommand command = new SqliteCommand($"SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = '@tableName'",
+                     connection))
+                {
+                    command.Parameters.Add("@tableName", SqliteType.Text).Value = tableName;
 
-                var result = command.ExecuteScalar();
-                connection!.Close();
-                return result != null && (long)result > 0;
+                    var result = command.ExecuteScalar();
+                    connection.Close();
+                    return result != null && (long)result > 0;
+                }
             }
         }
     }

@@ -155,7 +155,7 @@ namespace LoggerEngine
             }
         }
 
-        int GetHabitQuantityFromUser()
+        public int GetHabitQuantityFromUser()
         {
             while (true)
             {
@@ -165,7 +165,7 @@ namespace LoggerEngine
             }
         }
 
-        DateOnly GetHabitDateFromUser()
+        public DateOnly GetHabitDateFromUser()
         {
             while (true)
             {
@@ -177,7 +177,7 @@ namespace LoggerEngine
             }
         }
 
-        string GetHabitNameFromUser()
+        public string GetHabitNameFromUser()
         {
             while (true)
             {
