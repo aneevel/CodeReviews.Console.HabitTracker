@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using LoggerEngine.Helpers;
+using LoggerEngine.Database;
 
 namespace LoggerEngine
 {
@@ -14,7 +15,7 @@ namespace LoggerEngine
             { 4, "DELETE EXISTING HABIT" }
         };
 
-        DatabaseManager databaseManager;
+        SqliteDatabaseManager databaseManager;
         IUserInputHelper userInputHelper;
 
         public Engine(string connectionString, IUserInputHelper userInputHelper)
@@ -41,7 +42,7 @@ namespace LoggerEngine
 
                 Int32 option = userInputHelper.GetInt32Input("Please enter a numeric value corresponding to a menu option.");
 
-                if (!(0 <= option && option <= Engine.menuOptions.Count()))
+                if (!(0 <= option && option < Engine.menuOptions.Count))
                 {
                     Console.WriteLine(
                         "Invalid option chosen. Please choose one of the provided options."
@@ -78,7 +79,7 @@ namespace LoggerEngine
                 Console.WriteLine("Displaying all habits");
                 Console.WriteLine("---------------------");
 
-                databaseManager.ViewHabits();
+                databaseManager.ReadRecords("habits");
 
                 Console.WriteLine("Enter any key to return to main menu...\n");
                 _ = userInputHelper.GetStringInput("", true);
@@ -97,7 +98,7 @@ namespace LoggerEngine
                 DateOnly date = GetHabitDateFromUser();
                 int quantity = GetHabitQuantityFromUser();
 
-                databaseManager.InsertHabit(name, date, quantity);
+                databaseManager.InsertRecord("habits", name, date, quantity);
 
                 Console.WriteLine("Habit added!");
                 return;
@@ -112,13 +113,13 @@ namespace LoggerEngine
 
                 Int32 updateId = userInputHelper.GetInt32Input("Please enter a numeric value for quantity.");
 
-                if (databaseManager.HabitExists(updateId))
+                if (databaseManager.RecordExists("habits", updateId))
                 {
                     string name = GetHabitNameFromUser();
                     DateOnly date = GetHabitDateFromUser();
                     int quantity = GetHabitQuantityFromUser();
 
-                    databaseManager.UpdateHabit(updateId, name, date, quantity);
+                    databaseManager.UpdateRecord("habits", updateId, name, date, quantity);
 
                     Console.WriteLine($"Habit with id {updateId} updated!");
 
@@ -140,9 +141,9 @@ namespace LoggerEngine
 
                 Int32 deleteId = userInputHelper.GetInt32Input("Please enter a numeric value for quantity.");
 
-                if ( databaseManager.HabitExists(deleteId))
+                if ( databaseManager.RecordExists("habits", deleteId))
                 {
-                    databaseManager.DeleteHabit(deleteId);
+                    databaseManager.DeleteRecord("habits", deleteId);
 
                     Console.WriteLine($"Habit {deleteId} deleted!");
                     return;
