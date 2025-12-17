@@ -1,10 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using LoggerEngine;
 
 namespace LoggerEngine.Tests
 {
-    internal class LoggerEngine_GetHabitQuantityFromUser
+    [TestClass]
+    public class LoggerEngine_GetHabitQuantityFromUser
     {
+        private readonly Engine _loggerEngine;
+
+        public LoggerEngine_GetHabitQuantityFromUser()
+        {
+            _loggerEngine = new Engine("", );
+        }
     }
 }
