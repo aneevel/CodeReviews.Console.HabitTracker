@@ -15,12 +15,12 @@ namespace LoggerEngine
             { 4, "DELETE EXISTING HABIT" }
         };
 
-        SqliteDatabaseManager databaseManager;
+        IDatabaseManager databaseManager;
         IUserInputHelper userInputHelper;
 
-        public Engine(string connectionString, IUserInputHelper userInputHelper)
+        public Engine(IDatabaseManager databaseManager, IUserInputHelper userInputHelper)
         {
-            this.databaseManager = new(connectionString);
+            this.databaseManager = databaseManager;
             this.userInputHelper = userInputHelper;
         }
 

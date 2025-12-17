@@ -1,5 +1,6 @@
 ﻿using LoggerEngine;
 using LoggerEngine.Helpers;
+using LoggerEngine.Database;
 
 namespace HabitLogger
 {
@@ -9,7 +10,7 @@ namespace HabitLogger
         {
             string connectionString = @"Data Source=habit-tracker.db";
 
-            Engine engine = new(connectionString, new ConsoleUserInputHelper());
+            Engine engine = new(new SqliteDatabaseManager(connectionString), new ConsoleUserInputHelper());
             engine.Run();
         }
     }

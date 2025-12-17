@@ -2,7 +2,7 @@
 
 namespace LoggerEngine.Database
 {
-    internal class SqliteDatabaseManager : IDatabaseManager
+    public class SqliteDatabaseManager : IDatabaseManager
     {
         const int SEEDING_ROUNDS = 100;
         const int RANDOM_HABIT_AMOUNT_MAX = 100;
