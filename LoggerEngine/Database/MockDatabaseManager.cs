@@ -4,14 +4,6 @@ namespace LoggerEngine.Database
     public class MockDatabaseManager : IDatabaseManager
     {
         /// <summary>
-        /// Mock method for closing connection; always returns
-        /// </summary>
-        public void Close()
-        {
-            return;
-        }
-
-        /// <summary>
         /// Mock method for reading records; always returns
         /// </summary>
         public void ReadRecords()

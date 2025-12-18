@@ -6,11 +6,6 @@
     public interface IDatabaseManager
     {
         /// <summary>
-        /// Close the database connection
-        /// </summary>
-        public abstract void Close();
-
-        /// <summary>
         /// Read the records from main table
         /// </summary>
         public abstract void ReadRecords();
