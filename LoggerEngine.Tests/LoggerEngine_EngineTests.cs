@@ -4,11 +4,11 @@ using LoggerEngine.Helpers;
 namespace LoggerEngine.Tests
 {
     [TestClass]
-    public class LoggerEngine_GetHabitQuantityFromUser
+    public class LoggerEngine_EngineTests
     {
         private readonly Engine _loggerEngine;
 
-        public LoggerEngine_GetHabitQuantityFromUser()
+        public LoggerEngine_EngineTests()
         {
             _loggerEngine = new Engine(new MockDatabaseManager(), new MockUserInputHelper());
         }
