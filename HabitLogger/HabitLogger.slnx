@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="../../../../../../source/repos/aneevel/CodeReviews.Console.HabitTracker/HabitLogger/HabitLogger.csproj" />
-  <Project Path="../../../../../../source/repos/aneevel/CodeReviews.Console.HabitTracker/LoggerEngine.Tests/LoggerEngine.Tests.csproj" Id="f8bffa19-af95-4e7f-b4af-a5a6b0e22915" />
-  <Project Path="../../../../../../source/repos/aneevel/CodeReviews.Console.HabitTracker/LoggerEngine/LoggerEngine.csproj" />
+  <Project Path="../LoggerEngine.Tests/LoggerEngine.Tests.csproj" />
+  <Project Path="../LoggerEngine/LoggerEngine.csproj" />
+  <Project Path="HabitLogger.csproj" />
 </Solution>
