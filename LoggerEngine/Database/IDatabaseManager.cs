@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-
-namespace LoggerEngine.Database
+﻿namespace LoggerEngine.Database
 {
     /// <summary>
     /// Interface <c>IDatabaseManager</c> provides an interface for an object which handles database operations 

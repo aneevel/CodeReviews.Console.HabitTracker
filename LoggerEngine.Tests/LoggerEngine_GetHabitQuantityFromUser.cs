@@ -1,4 +1,4 @@
-﻿using LoggerEngine;
+﻿using LoggerEngine.Database;
 using LoggerEngine.Helpers;
 
 namespace LoggerEngine.Tests
@@ -10,10 +10,10 @@ namespace LoggerEngine.Tests
 
         public LoggerEngine_GetHabitQuantityFromUser()
         {
-            _loggerEngine = new Engine("", new MockUserInputHelper());
+            _loggerEngine = new Engine(new MockDatabaseManager(), new MockUserInputHelper());
         }
 
-        [TestMethod]
+        [TestMethod, Description("Ensure GetHabitQuantityFromUser returns Int32")]
         public void GetHabitQuantityFromUser_ShouldReturnAnInt32()
         {
             var result = _loggerEngine.GetHabitQuantityFromUser();
@@ -21,7 +21,7 @@ namespace LoggerEngine.Tests
             Assert.IsInstanceOfType(result, typeof(Int32), "GetHabitQuantityFromUser did not return an Int32!");
         }
 
-        [TestMethod]
+        [TestMethod, Description("Ensure GetHabitNameFromUser returns string")]
         public void GetHabitNameFromUser_ShouldReturnAString()
         {
             var result = _loggerEngine.GetHabitNameFromUser();
@@ -30,7 +30,7 @@ namespace LoggerEngine.Tests
             Assert.IsGreaterThan(0, result.Length, "GetHabitNameFromUser did not return a non-empty string!");
         }
 
-        [TestMethod]
+        [TestMethod, Description("Ensures GetHabitDateFromUser returns DateOnly")]
         public void GetHabitDateFromUser_ShouldReturnADateOnly()
         {
             var result = _loggerEngine.GetHabitDateFromUser();
