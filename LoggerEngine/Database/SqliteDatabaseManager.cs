@@ -2,28 +2,39 @@
 
 namespace LoggerEngine.Database
 {
+    /// <summary>
+    /// Concrete implementation of <c>IDatabaseManager</c> that can interface with Sqlite databases.
+    /// Contains helper methods for initializing and populating database
+    /// </summary>
     public class SqliteDatabaseManager : IDatabaseManager
     {
+        // How many records to seed empty database with
         const int SEEDING_ROUNDS = 100;
+
+        // Maximum quantity to use in random seeds
         const int RANDOM_HABIT_AMOUNT_MAX = 100;
         
         SqliteConnection? connection;
         Random random = new();
 
+        // Stock habit choices to use in random generation
         string[] habitChoices = [ "Walking", "Running", "Lift weights",
             "Clean room", "Make bed", "Do dishes", "Avoid sugary drinks"];
 
+        /// <summary>
+        /// Constructs a new <c>SqliteDatabaseManager</c> and connects to database with given name.
+        /// Creates one if it doesn't exist.
+        /// </summary>
+        /// <param name="connectionString">Name of the database file to connect to</param>
         public SqliteDatabaseManager(string connectionString)
         {
            connection = new SqliteConnection(connectionString);
            Initialize();
         }
 
-        public void Close()
-        {
-            connection!.Close();
-        }
-
+        /// <summary>
+        /// Read the records from main table
+        /// </summary>
         public void ReadRecords()
         {
             using (connection)
@@ -49,6 +60,12 @@ namespace LoggerEngine.Database
 
         }
 
+        /// <summary>
+        /// Insert a record with the passed parameters
+        /// </summary>
+        /// <param name="name">Name of the record</param>
+        /// <param name="date">Date of the record</param>
+        /// <param name="quantity">Quantity of the record</param>
         public void InsertRecord(string name, DateOnly date, int quantity)
         {
             using (connection)
@@ -67,6 +84,14 @@ namespace LoggerEngine.Database
             }
         }
 
+
+        /// <summary>
+        /// Update a record with the given ID
+        /// </summary>
+        /// <param name="id">ID of the record</param>
+        /// <param name="name">Name of the record</param>
+        /// <param name="date">Date of the record</param>
+        /// <param name="quantity">Quantity of the record</param>
         public void UpdateRecord(int id, string name, DateOnly date, int quantity)
         {
             using (connection)
@@ -87,6 +112,10 @@ namespace LoggerEngine.Database
             }
         }
 
+        /// <summary>
+        /// Delete a record with the given ID
+        /// </summary>
+        /// <param name="id">ID of the record</param>
         public void DeleteRecord(int id)
         {
             using (connection)
@@ -102,6 +131,10 @@ namespace LoggerEngine.Database
             }
         }
 
+        /// <summary>
+        /// Check if a record exists with given ID
+        /// </summary>
+        /// <param name="id">Id of the record</param>
         public bool RecordExists(int id)
         {
             using (connection)
@@ -119,6 +152,9 @@ namespace LoggerEngine.Database
             }
         }
 
+        /// <summary>
+        /// Creates and seeds database if no data exists
+        /// </summary>
         void Initialize()
         {
             if (!TableExists())
@@ -128,6 +164,9 @@ namespace LoggerEngine.Database
             }
         }
         
+        /// <summary>
+        /// Create the base table, which is assumed to be habits
+        /// </summary>
         void CreateTable()
         {
             using (connection)
@@ -146,6 +185,9 @@ namespace LoggerEngine.Database
             }
         }
 
+        /// <summary>
+        /// Seeds the database with semi-randomized data. Useful if no data is initially present
+        /// </summary>
         void SeedDatabase()
         {
             Console.WriteLine("Seeding database...");
@@ -172,6 +214,10 @@ namespace LoggerEngine.Database
         }
 
 
+        /// <summary>
+        /// Check if the main table in database exists
+        /// </summary>
+        /// <returns> true if it exists, false otherwise </returns>
         public bool TableExists()
         {
             using (connection)

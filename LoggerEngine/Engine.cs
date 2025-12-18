@@ -4,8 +4,12 @@ using LoggerEngine.Database;
 
 namespace LoggerEngine
 {
+    /// <summary>
+    /// Main Engine class used to drive HabitLogger; handles all logic and flow via Run() method
+    /// </summary>
     public class Engine
     {
+        // Available options for users
         static readonly Dictionary<Int32, string> menuOptions = new Dictionary<Int32, string>
         {
             { 0, "CLOSE APPLICATION" },
@@ -18,12 +22,20 @@ namespace LoggerEngine
         IDatabaseManager databaseManager;
         IUserInputHelper userInputHelper;
 
+        /// <summary>
+        /// Constructs an Engine with given databaseManager and userInputHelper
+        /// </summary>
+        /// <param name="databaseManager">Database interface to use</param>
+        /// <param name="userInputHelper">UserInput interface to use</param>
         public Engine(IDatabaseManager databaseManager, IUserInputHelper userInputHelper)
         {
             this.databaseManager = databaseManager;
             this.userInputHelper = userInputHelper;
         }
 
+        /// <summary>
+        /// Drives the Engine logic, handling user input and providing feedback
+        /// </summary>
         public void Run()
         {
             Console.WriteLine("Welcome to Habit Logger, C# edition!");
@@ -71,6 +83,9 @@ namespace LoggerEngine
             }
         }
 
+        /// <summary>
+        /// Handles the "View Habits" menu option by displaying all existing records
+        /// </summary>
         void HandleViewHabits()
         {
             while (true)
@@ -87,6 +102,9 @@ namespace LoggerEngine
             }
         }
 
+        /// <summary>
+        /// Handles the "Insert Habit" menu option by creating a new record
+        /// </summary>
         void HandleInsertHabit()
         {
             while (true)
@@ -104,6 +122,9 @@ namespace LoggerEngine
             }
         }
 
+        /// <summary>
+        /// Handles the "Update Habit" menu option by updating an existing record
+        /// </summary>
         void HandleUpdateHabit() 
         { 
             while (true)
@@ -132,6 +153,9 @@ namespace LoggerEngine
             }
         }
 
+        /// <summary>
+        /// Handles the "Delete Habit" menu option by deleting an existing record
+        /// </summary>
         void HandleDeleteHabit() 
         { 
             while (true)
@@ -155,7 +179,11 @@ namespace LoggerEngine
             }
         }
 
-        public int GetHabitQuantityFromUser()
+        /// <summary>
+        /// Retrieves the "quantity" of a habit from user input
+        /// </summary>
+        /// <returns>Int32 representing the quantity</returns>
+        public Int32 GetHabitQuantityFromUser()
         {
             while (true)
             {
@@ -165,6 +193,10 @@ namespace LoggerEngine
             }
         }
 
+        /// <summary>
+        /// Retrieves the "date" of a habit from user input 
+        /// </summary>
+        /// <returns>DateOnly representing the date</returns>
         public DateOnly GetHabitDateFromUser()
         {
             while (true)
@@ -177,6 +209,10 @@ namespace LoggerEngine
             }
         }
 
+        /// <summary>
+        /// Retrieves the "name" of a habit from user input
+        /// </summary>
+        /// <returns>string representing the habit name</returns>
         public string GetHabitNameFromUser()
         {
             while (true)

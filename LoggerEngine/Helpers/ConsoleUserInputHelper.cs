@@ -2,6 +2,10 @@
 
 namespace LoggerEngine.Helpers
 {
+    /// <summary>
+    /// Concrete implementation of <c>IUserInputHelper</c> which retrieves input from Console.
+    /// Provides feedback from Console as well.
+    /// </summary>
     public class ConsoleUserInputHelper : IUserInputHelper
     {
         /// <summary>
