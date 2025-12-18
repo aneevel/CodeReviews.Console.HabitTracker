@@ -28,26 +28,24 @@ namespace LoggerEngine.Database
         {
             using (connection)
             {
-                using (SqliteCommand command = new SqliteCommand("SELECT * FROM habits;"))
+                connection!.Open();
+                using (SqliteCommand command = new SqliteCommand("SELECT * FROM habits;", connection))
                 {
-                    connection!.Open();
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            // Should be generic
                             var id = reader.GetString(0);
                             var name = reader.GetString(1);
                             var date = reader.GetString(2);
                             var quantity = reader.GetString(3);
 
-                            // TODO: Should be generic
                             Console.WriteLine($"#{id} | {name} | {date} | {quantity}");
                         }
                     }
                 }
-                connection!.Close();
             }
+            connection!.Close();
 
         }
 
@@ -56,7 +54,6 @@ namespace LoggerEngine.Database
             using (connection)
             {
                 connection!.Open();
-                // TODO: Make generic
                 using (SqliteCommand command = new SqliteCommand("INSERT INTO habits (Habit, Date, Quantity)" +
                     "VALUES (@name, @date, @quantity);", connection))
                 {

@@ -52,7 +52,7 @@ namespace LoggerEngine.Helpers
                     // Shortcut for no regex to match
                     if (expressions == null)
                     {
-                       if (DateOnly.TryParse(input, out DateOnly dateOnly))
+                       if (DateOnlyHelper.TryParse(input, out DateOnly dateOnly))
                             return dateOnly;
                        
                     }
@@ -62,12 +62,12 @@ namespace LoggerEngine.Helpers
                         {
                             if (Regex.IsMatch(input, regex.ToString()))
                             {
-                                if (DateOnly.TryParse(input, out DateOnly dateOnly))
+                                if (DateOnlyHelper.TryParse(input, out DateOnly dateOnly))
                                     return dateOnly;
 
                                 // Handle special (t) case
                                 if (regex.ToString() == "^t$")
-                                    return DateOnly.FromDateTime(DateTime.Now);
+                                    return DateOnlyHelper.GetToday();
                             }
                         }
                     }
