@@ -53,7 +53,6 @@ namespace LoggerEngine
                 switch (option)
                 {
                     case 0:
-                        databaseManager.Close();
                         Environment.Exit(0);
                         break;
                     case 1:
