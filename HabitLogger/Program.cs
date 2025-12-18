@@ -4,6 +4,9 @@ using LoggerEngine.Database;
 
 namespace HabitLogger
 {
+    /// <summary>
+    /// HabitLogger application for tracking occurrence and quantity of specific habits.
+    /// </summary>
     class Program
     {
         public static void Main(string[] args)
